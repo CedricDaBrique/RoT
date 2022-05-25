@@ -9,12 +9,16 @@ class Tableau1 extends Phaser.Scene {
         this.load.image("bgf", "assets/bg2.png");
         this.load.image("bgf2", "assets/bg3.png");
         this.load.image("vide", "assets/images/vide.png");
+        this.load.image("so", "assets/parallax.png");
 
         // chargement de la map en json
         this.load.tilemapTiledJSON("map", "assets/MapBasique.json");
         //chargement des animations
         for(let i=1;i<=5;i++){
             this.load.image('player'+i, 'assets/idle/idle'+i+'.png');
+        }
+        for(let i=1;i<=24;i++){
+            this.load.image('laser'+i, 'assets/animation/laser'+i+'.png');
         }
         for(let i=1;i<=4;i++){
             this.load.image('dash'+i, 'assets/animation/dash/dash'+i+'.png');
@@ -32,30 +36,22 @@ class Tableau1 extends Phaser.Scene {
     }
 
     create() {
-
+        this.scale.resize(1000, 800);
         this.turn = false;
-        this.jump = false;
-
-
-        this.largeurniveau = 8064;
-        this.hauteurniveau = 8064;
-        this.largeurcamera = 1200;
-        this.hauteurcamera = 640;
-
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
         //CAMERA
-        this.zoom = 1.5;
-        this.cameras.main.setZoom(this.zoom);
+
 
         //Ajout de l'arrière plan
         this.bg2 = this.add.sprite(0,0, 'bg').setOrigin(0,0);
         this.bg = this.add.sprite(0,0, 'bg').setOrigin(0,1);
         this.bg3 = this.add.sprite(0,0, 'bg').setOrigin(0,2);
         this.bgf = this.add.sprite(0,0, 'bgf').setOrigin(0,3);
-
-
+        this.so = this.add.sprite(-3010,1900, 'so').setOrigin(0,0);
+        this.so2 = this.add.sprite(-2010,1900, 'so').setOrigin(0,0);
+        this.so3 = this.add.sprite(-1010,2000, 'so').setOrigin(0,0);
 
         this.speed = {
             speedDash: 1,
@@ -106,6 +102,14 @@ class Tableau1 extends Phaser.Scene {
             "plateforme",
             tileset2
         );
+        const spike = map.createLayer(
+            "spike",
+            tileset2
+        );
+        const decors= map.createLayer(
+            "decors",
+            tileset2
+        );
 
         this.speciales = this.physics.add.group({
             allowGravity: false,
@@ -120,7 +124,7 @@ class Tableau1 extends Phaser.Scene {
             immovable: true
         });
         map.getObjectLayer('colliders').objects.forEach((collider) => {
-            console.log("collider",collider);
+
             this.colliderMurboup = this.collidersMur.create(collider.x, collider.y,'vide')
                                                     .setRotation(Phaser.Math.DegToRad(collider.rotation))
                                                     .setOrigin(0)
@@ -129,13 +133,19 @@ class Tableau1 extends Phaser.Scene {
 
         platforms.setCollisionByExclusion(-1, true);
 
+
+
+
+
+
         // Création du personnage de base
-        this.player = this.physics.add.sprite(150, 200, 'player1').setOrigin(0, 0);
+        this.player = this.physics.add.sprite(-2180, 2032, 'player1').setOrigin(0, 0);
         this.player.setDisplaySize(64, 64);
         this.player.body.setAllowGravity(true);
         this.player.setVisible(true);
+        //this.player.setSize(100, 135);
+        //fthis.player.setOffset(40, 40);
         this.player.setVelocityY(0);
-        //this.player.setBodySize(1,1)
         this.player.scale = 0.6
 
         //Creation des animations du personnage
@@ -194,6 +204,38 @@ class Tableau1 extends Phaser.Scene {
             repeat: -1,
         });
 
+        this.anims.create({
+            key: 'laser',
+            frames: [
+                {key:'laser1'},
+                {key:'laser2'},
+                {key:'laser3'},
+                {key:'laser4'},
+                {key:'laser5'},
+                {key:'laser6'},
+                {key:'laser7'},
+                {key:'laser8'},
+                {key:'laser9'},
+                {key:'laser10'},
+                {key:'laser11'},
+                {key:'laser12'},
+                {key:'laser13'},
+                {key:'laser14'},
+                {key:'laser15'},
+                {key:'laser16'},
+                {key:'laser17'},
+                {key:'laser18'},
+                {key:'laser19'},
+                {key:'laser20'},
+                {key:'laser21'},
+                {key:'laser22'},
+                {key:'laser23'},
+                {key:'laser24'},
+            ],
+            frameRate: 24,
+            repeat: -1,
+        });
+
 
         // Creation des collision
         this.physics.add.collider(this.player, this.collidersMur);
@@ -201,24 +243,54 @@ class Tableau1 extends Phaser.Scene {
         this.physics.add.collider(this.player, this.speciales);
 
 
+        //this.zoom = 1.5;
 
-        this.cameras.main.startFollow(this.player);
+        //this.cameras.main.startFollow(this.player, false);
+        this.cameras.main.startFollow(this.player, true)
+        ;
 
 
         this.initKeyboard();
+
+        const objectsLayer = map.getObjectLayer('tp')
+        objectsLayer.objects.forEach(objData=> {
+            const {x = 0, y = 0, name} = objData
+
+            switch (name) {
+                case 'tp1': {
+                    this.tp1 = this.physics.add.sprite(x, y-200, 'player').setOrigin(0, 0);
+                    this.tp1.setDisplaySize(64, 64);
+                    this.tp1.body.setAllowGravity(true);
+                    this.tp1.setVisible(true);
+
+
+                    this.physics.add.collider(this.tp1,this.collidersMur)
+
+                }
+                case 'tp2': {
+
+                    let me = this;
+                    this.tp2 = this.physics.add.sprite(x, y-200, 'player').setOrigin(0, 0);
+                    this.tp2.setDisplaySize(64, 64);
+                    this.tp2.body.setAllowGravity(true);
+                    this.tp2.setVisible(true);
+
+                    this.physics.add.collider(this.tp2,this.collidersMur)
+
+                    this.physics.add.overlap(this.player, this.tp1, function () {
+
+                        me.player.x = me.tp2.x
+                        me.player.y = me.tp2.y-100
+                    })
+
+
+
+                }
+            }
+        })
+
+
     }
-
-    // fonction pour faire regarder s'il y a un overlaps donc deux objets qui se touche pour l'utilisé plus facilement.
-
-    checkCollider(Objet1x, Objet1y, Object1TailleLargeur, Object1TailleHauteur, Objet2x, Objet2y, Objet2TaileLargeur, Objet2TailleHauteur) {
-        if (Objet1x + Object1TailleLargeur > Objet2x && Objet1x < Objet2x + Objet2TaileLargeur
-            &&
-            Objet1y + Object1TailleHauteur > Objet2y && Objet1y < Objet2y + Objet2TailleHauteur) {
-            // Si toutes les conditons sont vrais alors il y a bien un overlaps, on renvoie donc true/vrai a notre foncion sinon on ne renvoie rien
-            return true
-        }
-    }
-
 
     initKeyboard() {
         let me = this;
@@ -230,16 +302,13 @@ class Tableau1 extends Phaser.Scene {
 
                     me.leftDown = false
                     me.player.setVelocityX(0);
-                    me.player.play('player');
-
+                    break;
 
 
                 case Phaser.Input.Keyboard.KeyCodes.D:
                     me.rightDown = false;
                     me.player.setVelocityX(0);
-                    me.player.play('player');
-
-
+                    break;
 
                 case Phaser.Input.Keyboard.KeyCodes.SHIFT:
                     me.shiftDown = false;
@@ -249,10 +318,6 @@ class Tableau1 extends Phaser.Scene {
                 default:
                     me.player.play('player')
                     break;
-
-
-
-
             }
         })
         this.input.keyboard.on('keydown', function (kevent) {
@@ -261,34 +326,22 @@ class Tableau1 extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.Q:
 
 
-                    me.gauche = true;
                     me.player.setVelocityX(-200);
                     me.leftDown=true;
-                    console.log(me.gauche)
-                    if (this.gauche === true){
-                        me.player.flipX(true)
-                    }
+
+                    me.player.setFlipX(true)
+
                     me.player.play('move',true);
-
-
-
                     break;
 
                 case Phaser.Input.Keyboard.KeyCodes.D:
 
                         me.rightDown = true
                         me.player.setVelocityX(300);
-                        me.gauche = false
                         me.turn = false;
-                        console.log(me.gauche)
+
                     me.player.play('move',true);
-
-                        if (this.gauche === false){
-
-                    }
-                    else{
-                        me.player.setFlipX(false)
-                    }
+                    me.player.setFlipX(false)
                     break;
 
                 case Phaser.Input.Keyboard.KeyCodes.SPACE:
@@ -296,7 +349,6 @@ class Tableau1 extends Phaser.Scene {
                     {
                         me.player.setVelocityY(-500);
                         me.player.play('jump');
-                        this.jump = true;
                     }
                     break;
 
@@ -304,12 +356,6 @@ class Tableau1 extends Phaser.Scene {
                     me.shiftDown = true;
                     me.player.play('dash');
                     break;
-
-
-
-
-
-
 
             }
         })
@@ -324,20 +370,29 @@ class Tableau1 extends Phaser.Scene {
         }
     }
 
+
+
     update(){
 
-       let me = this
-        console.log(this.jump);
-       // me.cameras.main.startFollow(me.player.player, true, 0, 0,0,0).setDeadzone(undefined,0);
-        if (this.jump === true)
-        {
 
-            if(this.player.body.onFloor())
-            {
-                this.player.play('player');
-                this.jump = false;
+        console.log(this.tp1.x)
+        console.log(this.player.x)
+
+        if(this.player.body.velocity.x===0){
+            if (this.player.body.onFloor()) {
+                this.player.play('player',true)
             }
         }
+
+       let me = this
+
+       // me.cameras.main.startFollow(me.player.player, true, 0, 0,0,0).setDeadzone(undefined,0);
+
+            if(this.player.body.velocity < 0)
+            {
+                this.player.play('player');
+            }
+
 
         if (this.player.body.velocity.y >= 0)
         {
