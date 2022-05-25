@@ -4,7 +4,7 @@ class Tableau1 extends Phaser.Scene {
     preload() {
 
         this.load.image("tilemap2", "assets/tiled.png");
-
+         //d
         this.load.image("bg", "assets/TEST1.png");
         this.load.image("bgf", "assets/bg2.png");
         this.load.image("bgf2", "assets/bg3.png");
