@@ -479,15 +479,15 @@
                  "x":-16,
                  "y":32
                 }],
-         "height":48,
+         "height":16,
          "id":17,
          "name":"decors",
          "opacity":1,
          "startx":-48,
-         "starty":0,
+         "starty":32,
          "type":"tilelayer",
          "visible":true,
-         "width":96,
+         "width":48,
          "x":0,
          "y":0
         }, 
@@ -1012,8 +1012,8 @@
                  "type":"",
                  "visible":true,
                  "width":1368.96,
-                 "x":89.1866666666667,
-                 "y":-866.666668333333
+                 "x":91.02,
+                 "y":-866.333335
                 }, 
                 {
                  "height":2.66667,
@@ -1059,15 +1059,15 @@
                  "x":-16,
                  "y":32
                 }],
-         "height":32,
+         "height":16,
          "id":14,
          "name":"spike",
          "opacity":1,
-         "startx":-48,
-         "starty":16,
+         "startx":-32,
+         "starty":32,
          "type":"tilelayer",
          "visible":true,
-         "width":64,
+         "width":32,
          "x":0,
          "y":0
         }, 
