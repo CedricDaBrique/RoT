@@ -1,15 +1,20 @@
 class Tableau1 extends Phaser.Scene {
 
+    constructor() {
+        super("mainGame");
+    }
 
     preload() {
 
         this.load.image("tilemap2", "assets/tiled.png");
         //d
         this.load.image("bg", "assets/TEST1.png");
+        this.load.image("bg2", "assets/test2.png");
         this.load.image("bgf", "assets/bg2.png");
         this.load.image("bgf2", "assets/bg3.png");
         this.load.image("vide", "assets/images/vide.png");
         this.load.image("so", "assets/parallax.png");
+        this.load.image("bgb", "assets/bgb.png");
 
         // chargement de la map en json
         this.load.tilemapTiledJSON("map", "assets/MapBasique.json");
@@ -29,6 +34,12 @@ class Tableau1 extends Phaser.Scene {
         for (let i = 1; i <= 6; i++) {
             this.load.image('move' + i, 'assets/animation/Move/Move' + i + '.png');
         }
+        for (let i = 1; i <= 4; i++) {
+            this.load.image('teleporter' + i, 'assets/animation/teleporter/teleporter' + i + '.png');
+        }
+        for (let i = 1; i <= 6; i++) {
+            this.load.image('boss' + i, 'assets/animation/boss/antagoniste' + i + '.png');
+        }
     }
 
 
@@ -45,10 +56,11 @@ class Tableau1 extends Phaser.Scene {
 
 
         //Ajout de l'arrière plan
-        this.bg2 = this.add.sprite(0, 0, 'bg').setOrigin(0, 0);
-        this.bg = this.add.sprite(0, 0, 'bg').setOrigin(0, 1);
-        this.bg3 = this.add.sprite(0, 0, 'bg').setOrigin(0, 2);
-        this.bgf = this.add.sprite(0, 0, 'bgf').setOrigin(0, 3);
+        this.bg2 = this.add.sprite(0, -3200, 'bg2').setOrigin(0, 0);
+        this.bg = this.add.sprite(0, -3200, 'bg').setOrigin(0, 0);
+        this.bgb = this.add.sprite(-700, -6000, 'bgb').setOrigin(0, 0);
+
+
         this.so = this.add.sprite(-3010, 1900, 'so').setOrigin(0, 0);
         this.so2 = this.add.sprite(-2010, 1900, 'so').setOrigin(0, 0);
         this.so3 = this.add.sprite(-1010, 2000, 'so').setOrigin(0, 0);
@@ -137,16 +149,19 @@ class Tableau1 extends Phaser.Scene {
 
 
         // Création du personnage de base
-        this.player = this.physics.add.sprite(-2180, 2032, 'player1').setOrigin(0, 0);
+        this.player = this.physics.add.sprite(-3010 , 2041, 'player1').setOrigin(0, 0); ///750  -2900
         this.player.setDisplaySize(64, 64);
         this.player.body.setAllowGravity(true);
         this.player.setVisible(true);
-        //this.player.setSize(100, 135);
-        //fthis.player.setOffset(40, 40);
+        this.player.setSize(100, 135);
+        this.player.setOffset(40, 40);
         this.player.setVelocityY(0);
         this.player.scale = 0.6
 
-        //Creation des animations du personnage
+
+        this.boss = this.add.sprite(800, -5248, 'boss').setOrigin(0, 0);
+
+        //Creation des animations
         this.anims.create({
             key: 'player',
             //frames: this.getFrames('player', 5),
@@ -201,6 +216,38 @@ class Tableau1 extends Phaser.Scene {
             frameRate: 6,
             repeat: -1,
         });
+        this.anims.create({
+            key: 'boss',
+            frames: [
+                {key: 'boss1'},
+                {key: 'boss2'},
+                {key: 'boss3'},
+                {key: 'boss4'},
+                {key: 'boss5'},
+                {key: 'boss6'},
+            ],
+            frameRate: 6,
+            repeat: -1,
+
+        });
+        this.boss.play('boss');
+
+        this.anims.crea
+        this.anims.create({
+            key: 'teleporter',
+            frames: [
+                {key: 'teleporter1'},
+                {key: 'teleporter2'},
+                {key: 'teleporter3'},
+                {key: 'teleporter4'},
+
+            ],
+            frameRate: 4,
+            repeat: -1,
+
+
+        });
+
 
         this.anims.create({
             key: 'laser',
@@ -251,26 +298,30 @@ class Tableau1 extends Phaser.Scene {
         this.initKeyboard();
 
         const objectsLayer = map.getObjectLayer('tp')
-        objectsLayer.objects.forEach(objData => {
+         objectsLayer.objects.forEach(objData => {
             const {x = 0, y = 0, name} = objData
 
             switch (name) {
                 case 'tp1': {
-                    this.tp1 = this.physics.add.sprite(x, y - 200, 'player').setOrigin(0, 0);
+                    this.tp1 = this.physics.add.sprite(x, y , 'teleporter').setOrigin(0, 0);
+
                     this.tp1.setDisplaySize(64, 64);
-                    this.tp1.body.setAllowGravity(true);
+                    this.tp1.body.setAllowGravity(false);
                     this.tp1.setVisible(true);
 
 
                     this.physics.add.collider(this.tp1, this.collidersMur)
 
+
+
                 }
                 case 'tp2': {
 
                     let me = this;
-                    this.tp2 = this.physics.add.sprite(x, y - 200, 'player').setOrigin(0, 0);
+                    this.tp2 = this.physics.add.sprite(x, y , 'teleporter').setOrigin(0, 0);
+
                     this.tp2.setDisplaySize(64, 64);
-                    this.tp2.body.setAllowGravity(true);
+                    this.tp2.body.setAllowGravity(false);
                     this.tp2.setVisible(true);
 
                     this.physics.add.collider(this.tp2, this.collidersMur)
@@ -281,11 +332,43 @@ class Tableau1 extends Phaser.Scene {
                         me.player.y = me.tp2.y - 100
                     })
 
+                    break;
+                }
+                case 'tp3': {
+
+                    this.tp3 = this.physics.add.sprite(x, y, 'teleporter').setOrigin(0, 0);
+
+                    this.tp3.setDisplaySize(64, 64);
+                    this.tp3.body.setAllowGravity(false);
+                    this.tp3.setVisible(true);
+                    this.physics.add.collider(this.tp3, this.collidersMur)
+
+
+
+
+                }
+                case 'tp4': {
+
+                    let me = this;
+                    this.tp4 = this.physics.add.sprite(x, y, 'teleporter').setOrigin(0, 0);
+                    this.tp4.setDisplaySize(64, 64);
+                    this.tp4.body.setAllowGravity(false);
+                    this.tp4.setVisible(true);
+                    this.physics.add.collider(this.tp4, this.collidersMur)
+                    this.physics.add.overlap(this.player, this.tp3, function () {
+
+
+                        console.log(me.tp4.x)
+                        console.log(me.player.x)
+                        me.player.x = me.tp4.x
+                        me.player.y = me.tp4.y - 100
+                    })
 
                 }
             }
         })
 
+        //Ajout laser
         const objectsLayerLaser = map.getObjectLayer('laser')
         objectsLayerLaser.objects.forEach(objData => {
             const {x = 0, y = 0, name} = objData
@@ -298,9 +381,6 @@ class Tableau1 extends Phaser.Scene {
                         this.laser1 = this.physics.add.sprite(x, y - 200, 'laser1').setOrigin(0, 0);
                         this.laser1.body.setAllowGravity(false);
                         this.laser1.setVisible(true);
-
-
-
                         this.time.addEvent({
                             delay: 5000,
                             callback: ()=>{
@@ -308,12 +388,30 @@ class Tableau1 extends Phaser.Scene {
                             },
                             loop: true
                         })
-
-
-
-
                         this.laser1.x = x;
                         this.laser1.y = y;
+
+
+
+
+                    }
+                    case 'laser2': {
+
+                        this.laser2 = this.physics.add.sprite(x, y - 200, 'laser2').setOrigin(0, 0);
+                        this.laser2.body.setAllowGravity(false);
+                        this.laser2.setVisible(true);
+
+
+
+                        this.time.addEvent({
+                            delay: 5000,
+                            callback: ()=>{
+                                this.laser2.play("laser")
+                            },
+                            loop: true
+                        })
+                        this.laser2.x = x;
+                        this.laser2.y = y;
 
 
 
@@ -412,8 +510,7 @@ class Tableau1 extends Phaser.Scene {
         // this.player.x = this.laser1.x
         // this.player.y = this.laser1.y - 100
 
-        console.log(this.tp1.x)
-        console.log(this.player.x)
+
 
         if(this.player.body.velocity.x===0){
             if (this.player.body.onFloor()) {
@@ -455,7 +552,7 @@ class Tableau1 extends Phaser.Scene {
                 this.dash.play();
                 this.flag = true;
             }
-            this.player.setVelocityX(4000 * this.speed.speedDash);
+            this.player.setVelocityX(1500 * this.speed.speedDash);
             console.log(this.speed.speedDash);
         }
 

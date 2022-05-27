@@ -9,11 +9,12 @@ let gameConfig = {
         default: 'arcade',
         arcade: {
 
-            debug : false ,
+            debug : true ,
             gravity: { y: 600},
             fps : 60
         }
     },
-    scene: new Tableau1()
+    scene: [intro,Tableau1]
+
 };
 let game = new Phaser.Game(gameConfig);
