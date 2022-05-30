@@ -16,6 +16,7 @@ class Tableau1 extends Phaser.Scene {
         this.load.image("so", "assets/parallax.png");
         this.load.image("bgb", "assets/bgb.png");
 
+
         // chargement de la map en json
         this.load.tilemapTiledJSON("map", "assets/MapBasique.json");
         //chargement des animations
@@ -40,6 +41,15 @@ class Tableau1 extends Phaser.Scene {
         for (let i = 1; i <= 6; i++) {
             this.load.image('boss' + i, 'assets/animation/boss/antagoniste' + i + '.png');
         }
+        for (let i = 1; i <= 7; i++) {
+            this.load.image('ennemi' + i, 'assets/animation/ennemi/ennemis' + i + '.png');
+        }
+        for (let i = 1; i <= 9; i++) {
+            this.load.image('death' + i, 'assets/animation/death/death' + i + '.png');
+        }
+        for (let i = 1; i <= 8; i++) {
+            this.load.image('balancier' + i, 'assets/animation/balancier/balancier' + i + '.png');
+        }
     }
 
 
@@ -47,10 +57,14 @@ class Tableau1 extends Phaser.Scene {
     }
 
     create() {
+        let me = this;
+
+
+
         this.scale.resize(1000, 800);
         this.turn = false;
-
         this.cursors = this.input.keyboard.createCursorKeys();
+
 
         //CAMERA
 
@@ -125,12 +139,21 @@ class Tableau1 extends Phaser.Scene {
             tileset2
         );
 
+
         this.speciales = this.physics.add.group({
             allowGravity: false,
             immovable: true
         });
         map.getObjectLayer('platforms_colliders').objects.forEach((platform) => {
             this.specialesboup = this.speciales.create(platform.x, platform.y - platform.height, 'vide').setOrigin(0).setDisplaySize(platform.width, platform.height);
+        });
+
+        this.checkpoint=this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('checkpoint').objects.forEach((point)=>{
+        this. checkpoint_boup = this.checkpoint.create(point.x, point.y, "vide").setOrigin(0).setDisplaySize(point.width, point.height);
         });
 
         this.collidersMur = this.physics.add.group({
@@ -145,11 +168,24 @@ class Tableau1 extends Phaser.Scene {
                 .setDisplaySize(collider.width, collider.height);
         });
 
+
+        this.spikecolliders = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('spikecolliders').objects.forEach((oignon) => {
+            this.spikecollider = this.spikecolliders.create(oignon.x,oignon.y, 'vide').setOrigin(0).setDisplaySize(oignon.width, oignon.height);
+        });
+
+
+
+
+
         platforms.setCollisionByExclusion(-1, true);
 
 
         // Création du personnage de base
-        this.player = this.physics.add.sprite(-3010 , 2041, 'player1').setOrigin(0, 0); ///750  -2900
+        this.player = this.physics.add.sprite(-3040 , 2200, 'player1').setOrigin(0, 0); ///750  -2900
         this.player.setDisplaySize(64, 64);
         this.player.body.setAllowGravity(true);
         this.player.setVisible(true);
@@ -158,8 +194,70 @@ class Tableau1 extends Phaser.Scene {
         this.player.setVelocityY(0);
         this.player.scale = 0.6
 
+        this.physics.add.overlap(this.player, this.checkpoint, function()
+        {
+            me.checkpointX = me.player.x;
+            me.checkpointY = me.player.y;
+        });
+
+        //Ajouts d'animations
+        this.teleporter1 = this.add.sprite(190, 2260, 'teleporter').setOrigin(0, 0);
+        this.teleporter2 = this.add.sprite(640, 595, 'teleporter').setOrigin(0, 0);
+        this.teleporter3 = this.add.sprite(740, -3090, 'teleporter').setOrigin(0, 0);
+        this.teleporter4 = this.add.sprite(740, -4655, 'teleporter').setOrigin(0, 0);
+        this.balancier1 = this.add.sprite(110, 155, 'balancier').setOrigin(0, 0);
+        this.balancier2 = this.add.sprite(885, -100, 'balancier').setOrigin(0, 0).setDisplaySize(50  ,50);
 
         this.boss = this.add.sprite(800, -5248, 'boss').setOrigin(0, 0);
+        this.ennemi = this.add.sprite(-767, 2220, 'ennemi').setOrigin(0, 0);
+
+
+
+        this.ennemi1 = this.add.sprite(1230, -1950, 'ennemi').setOrigin(0, 0);
+        var tween = this.tweens.add({
+            targets: this.ennemi1,
+            x: 600,
+            ease: 'ennemi1',
+            duration: 3000,
+            flipX: true,
+            yoyo: true,
+            repeat: -1,
+            onStart: function () { console.log('onStart'); console.log(arguments); },
+            onComplete: function () { console.log('onComplete'); console.log(arguments); },
+            onYoyo: function () { console.log('onYoyo'); console.log(arguments); },
+            onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
+        });
+
+
+        this.ennemi2 = this.add.sprite(200, -2320, 'ennemi').setOrigin(0, 0).setFlipX(true);
+        var tween = this.tweens.add({
+            targets: this.ennemi2,
+            x: 600,
+            ease: 'ennemi2',
+            duration: 3000,
+            flipX: true,
+            yoyo: true,
+            repeat: -1,
+            onStart: function () { console.log('onStart'); console.log(arguments); },
+            onComplete: function () { console.log('onComplete'); console.log(arguments); },
+            onYoyo: function () { console.log('onYoyo'); console.log(arguments); },
+            onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //Creation des animations
         this.anims.create({
@@ -192,6 +290,26 @@ class Tableau1 extends Phaser.Scene {
 
         });
 
+
+        this.anims.create({
+            key: 'balancier',
+            frames: [
+                {key: 'balancier1'},
+                {key: 'balancier2'},
+                {key: 'balancier3'},
+                {key: 'balancier4'},
+                {key: 'balancier5'},
+                {key: 'balancier6'},
+                {key: 'balancier7'},
+                {key: 'balancier8'}
+            ],
+            frameRate: 8,
+            repeat : -1,
+
+        });
+        this.balancier1.play('balancier');
+        this.balancier2.play('balancier');
+
         this.anims.create({
             key: 'dash',
             frames: [
@@ -201,6 +319,21 @@ class Tableau1 extends Phaser.Scene {
                 {key: 'dash4'},
             ],
             frameRate: 4,
+        });
+        this.anims.create({
+            key: 'death',
+            frames: [
+                {key: 'death1'},
+                {key: 'death2'},
+                {key: 'death3'},
+                {key: 'death4'},
+                {key: 'death5'},
+                {key: 'death6'},
+                {key: 'death7'},
+                {key: 'death8'},
+                {key: 'death9'},
+            ],
+            frameRate: 9,
         });
 
         this.anims.create({
@@ -216,6 +349,25 @@ class Tableau1 extends Phaser.Scene {
             frameRate: 6,
             repeat: -1,
         });
+        this.anims.create({
+            key: 'ennemi',
+            frames: [
+                {key: 'ennemi1'},
+                {key: 'ennemi2'},
+                {key: 'ennemi3'},
+                {key: 'ennemi4'},
+                {key: 'ennemi5'},
+                {key: 'ennemi6'},
+                {key: 'ennemi7'},
+            ],
+            frameRate: 7,
+            repeat: -1,
+        });
+        this.ennemi.play('ennemi');
+        this.ennemi1.play('ennemi');
+        this.ennemi2.play('ennemi');
+
+
         this.anims.create({
             key: 'boss',
             frames: [
@@ -242,11 +394,16 @@ class Tableau1 extends Phaser.Scene {
                 {key: 'teleporter4'},
 
             ],
-            frameRate: 4,
+            frameRate: 6,
             repeat: -1,
 
 
+
         });
+        this.teleporter1.play('teleporter');
+        this.teleporter2.play('teleporter');
+        this.teleporter3.play('teleporter');
+        this.teleporter4.play('teleporter');
 
 
         this.anims.create({
@@ -282,13 +439,18 @@ class Tableau1 extends Phaser.Scene {
         });
 
 
+
         // Creation des collision
         this.physics.add.collider(this.player, this.collidersMur);
+        this.physics.add.collider(this.player, this.spikecolliders,function()
+        {
+            me.respawn();
+        });
 
         this.physics.add.collider(this.player, this.speciales);
 
 
-        //this.zoom = 1.5;
+
 
         //this.cameras.main.startFollow(this.player, false);
         this.cameras.main.startFollow(this.player, true)
@@ -307,7 +469,7 @@ class Tableau1 extends Phaser.Scene {
 
                     this.tp1.setDisplaySize(64, 64);
                     this.tp1.body.setAllowGravity(false);
-                    this.tp1.setVisible(true);
+                    this.tp1.setVisible(false);
 
 
                     this.physics.add.collider(this.tp1, this.collidersMur)
@@ -322,7 +484,7 @@ class Tableau1 extends Phaser.Scene {
 
                     this.tp2.setDisplaySize(64, 64);
                     this.tp2.body.setAllowGravity(false);
-                    this.tp2.setVisible(true);
+                    this.tp2.setVisible(false);
 
                     this.physics.add.collider(this.tp2, this.collidersMur)
 
@@ -340,7 +502,7 @@ class Tableau1 extends Phaser.Scene {
 
                     this.tp3.setDisplaySize(64, 64);
                     this.tp3.body.setAllowGravity(false);
-                    this.tp3.setVisible(true);
+                    this.tp3.setVisible(false);
                     this.physics.add.collider(this.tp3, this.collidersMur)
 
 
@@ -353,7 +515,7 @@ class Tableau1 extends Phaser.Scene {
                     this.tp4 = this.physics.add.sprite(x, y, 'teleporter').setOrigin(0, 0);
                     this.tp4.setDisplaySize(64, 64);
                     this.tp4.body.setAllowGravity(false);
-                    this.tp4.setVisible(true);
+                    this.tp4.setVisible(false);
                     this.physics.add.collider(this.tp4, this.collidersMur)
                     this.physics.add.overlap(this.player, this.tp3, function () {
 
@@ -423,6 +585,12 @@ class Tableau1 extends Phaser.Scene {
     }
 
 
+    respawn()
+    {
+
+        this.player.setPosition(this.checkpointX,this.checkpointY);
+
+    }
 
 
     initKeyboard() {
@@ -465,6 +633,9 @@ class Tableau1 extends Phaser.Scene {
                     me.player.setFlipX(true)
 
                     me.player.play('move',true);
+
+
+
                     break;
 
                 case Phaser.Input.Keyboard.KeyCodes.D:
