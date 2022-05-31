@@ -15,6 +15,7 @@ class Tableau1 extends Phaser.Scene {
         this.load.image("vide", "assets/images/vide.png");
         this.load.image("so", "assets/parallax.png");
         this.load.image("bgb", "assets/bgb.png");
+        this.load.image("checkpoint", "assets/animation/checkpoint/checkpoint1.png");
 
 
         // chargement de la map en json
@@ -50,6 +51,10 @@ class Tableau1 extends Phaser.Scene {
         for (let i = 1; i <= 8; i++) {
             this.load.image('balancier' + i, 'assets/animation/balancier/balancier' + i + '.png');
         }
+        for (let i = 1; i <= 3; i++) {
+            this.load.image('engrenage' + i, 'assets/animation/engr/engrenage' + i + '.png');
+        }
+
     }
 
 
@@ -78,6 +83,14 @@ class Tableau1 extends Phaser.Scene {
         this.so = this.add.sprite(-3010, 1900, 'so').setOrigin(0, 0);
         this.so2 = this.add.sprite(-2010, 1900, 'so').setOrigin(0, 0);
         this.so3 = this.add.sprite(-1010, 2000, 'so').setOrigin(0, 0);
+        this.checkpoint1 = this.add.sprite(800, -575, 'checkpoint').setOrigin(0, 0);
+        this.checkpoint2 = this.add.sprite(280, -1725   , 'checkpoint').setOrigin(0, 0);
+        this.checkpoint3 = this.add.sprite(760, -4565, 'checkpoint').setOrigin(0, 0)
+        this.checkpoint4 = this.add.sprite(-1770, 2345, 'checkpoint').setOrigin(0, 0)
+
+
+
+
 
         this.speed = {
             speedDash: 1,
@@ -185,7 +198,7 @@ class Tableau1 extends Phaser.Scene {
 
 
         // Création du personnage de base
-        this.player = this.physics.add.sprite(-3040 , 2200, 'player1').setOrigin(0, 0); ///750  -2900
+        this.player = this.physics.add.sprite(-1800 , 2200, 'player1').setOrigin(0, 0); ///750  -2900
         this.player.setDisplaySize(64, 64);
         this.player.body.setAllowGravity(true);
         this.player.setVisible(true);
@@ -200,20 +213,26 @@ class Tableau1 extends Phaser.Scene {
             me.checkpointY = me.player.y;
         });
 
+
+
+
+
         //Ajouts d'animations
         this.teleporter1 = this.add.sprite(190, 2260, 'teleporter').setOrigin(0, 0);
         this.teleporter2 = this.add.sprite(640, 595, 'teleporter').setOrigin(0, 0);
         this.teleporter3 = this.add.sprite(740, -3090, 'teleporter').setOrigin(0, 0);
-        this.teleporter4 = this.add.sprite(740, -4655, 'teleporter').setOrigin(0, 0);
+        // this.teleporter4 = this.add.sprite(740, -4655, 'teleporter').setOrigin(0, 0);
         this.balancier1 = this.add.sprite(110, 155, 'balancier').setOrigin(0, 0);
         this.balancier2 = this.add.sprite(885, -100, 'balancier').setOrigin(0, 0).setDisplaySize(50  ,50);
-
+        this.engrenage2 = this.add.sprite(418.17, -1150.50, 'engrenage').setOrigin(0, 0).setDisplaySize(29  ,29);
+        this.engrenage3 = this.add.sprite(1150.50, -1727, 'engrenage').setOrigin(0, 0).setDisplaySize(32  ,32);
         this.boss = this.add.sprite(800, -5248, 'boss').setOrigin(0, 0);
-        this.ennemi = this.add.sprite(-767, 2220, 'ennemi').setOrigin(0, 0);
+        this.ennemi = this.physics.add.sprite(-767, 2220, 'ennemi').setOrigin(0, 0);
+        this.ennemi.setBodySize(150,150)
 
 
 
-        this.ennemi1 = this.add.sprite(1230, -1950, 'ennemi').setOrigin(0, 0);
+        this.ennemi1 = this.physics.add.sprite(1230, -1950, 'ennemi').setOrigin(0, 0);
         var tween = this.tweens.add({
             targets: this.ennemi1,
             x: 600,
@@ -229,7 +248,7 @@ class Tableau1 extends Phaser.Scene {
         });
 
 
-        this.ennemi2 = this.add.sprite(200, -2320, 'ennemi').setOrigin(0, 0).setFlipX(true);
+        this.ennemi2 = this.physics.add.sprite(200, -2320, 'ennemi').setOrigin(0, 0).setFlipX(true);
         var tween = this.tweens.add({
             targets: this.ennemi2,
             x: 600,
@@ -244,8 +263,13 @@ class Tableau1 extends Phaser.Scene {
             onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
         });
 
-
-
+        //
+        // this.physics.add.collider(this.ennemi2, this.player,function ()
+        // {
+        //     me.respawn();
+        // });
+        // this.physics.add.collider(this.ennemi2,function (ennemi2)
+        // {
 
 
 
@@ -335,6 +359,18 @@ class Tableau1 extends Phaser.Scene {
             ],
             frameRate: 9,
         });
+        this.anims.create({
+            key: 'engrenage',
+            frames: [
+                {key: 'engrenage1'},
+                {key: 'engrenage2'},
+                {key: 'engrenage3'},
+            ],
+            frameRate: 3,
+            repeat: -1,
+        });
+        this.engrenage2.play('engrenage');
+        this.engrenage3.play('engrenage');
 
         this.anims.create({
             key: 'move',
@@ -403,7 +439,7 @@ class Tableau1 extends Phaser.Scene {
         this.teleporter1.play('teleporter');
         this.teleporter2.play('teleporter');
         this.teleporter3.play('teleporter');
-        this.teleporter4.play('teleporter');
+        // this.teleporter4.play('teleporter');
 
 
         this.anims.create({
@@ -442,10 +478,25 @@ class Tableau1 extends Phaser.Scene {
 
         // Creation des collision
         this.physics.add.collider(this.player, this.collidersMur);
+        this.physics.add.collider(this.ennemi, this.collidersMur);
         this.physics.add.collider(this.player, this.spikecolliders,function()
         {
             me.respawn();
         });
+
+        this.physics.add.overlap(this.player, this.ennemi,function()
+        {
+            if (me.player.texture.key === "dash1"){
+                me.ennemi.disableBody()
+                me.ennemi.setVisible(false)
+
+            }
+            else{
+                me.respawn()
+            }
+
+        });
+
 
         this.physics.add.collider(this.player, this.speciales);
 
@@ -540,7 +591,7 @@ class Tableau1 extends Phaser.Scene {
                 switch (name) {
                     case 'laser1': {
 
-                        this.laser1 = this.physics.add.sprite(x, y - 200, 'laser1').setOrigin(0, 0);
+                        this.laser1 = this.physics.add.sprite(x, y - 200, 'laser24').setOrigin(0, 0);
                         this.laser1.body.setAllowGravity(false);
                         this.laser1.setVisible(true);
                         this.time.addEvent({
@@ -556,10 +607,11 @@ class Tableau1 extends Phaser.Scene {
 
 
 
+
                     }
                     case 'laser2': {
 
-                        this.laser2 = this.physics.add.sprite(x, y - 200, 'laser2').setOrigin(0, 0);
+                        this.laser2 = this.physics.add.sprite(x, y - 200, 'laser24').setOrigin(0, 0);
                         this.laser2.body.setAllowGravity(false);
                         this.laser2.setVisible(true);
 
@@ -589,7 +641,8 @@ class Tableau1 extends Phaser.Scene {
     {
 
         this.player.setPosition(this.checkpointX,this.checkpointY);
-
+        this.ennemi.enableBody()
+        this.ennemi.setVisible(true)
     }
 
 
@@ -678,9 +731,9 @@ class Tableau1 extends Phaser.Scene {
 
     update(){
 
+
         // this.player.x = this.laser1.x
         // this.player.y = this.laser1.y - 100
-
 
 
         if(this.player.body.velocity.x===0){
