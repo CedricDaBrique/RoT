@@ -27,7 +27,7 @@ class Tableau1 extends Phaser.Scene {
         for (let i = 1; i <= 24; i++) {
             this.load.image('laser' + i, 'assets/animation/laser/laser' + i + '.png');
         }
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= 2; i++) {
             this.load.image('dash' + i, 'assets/animation/dash/dash' + i + '.png');
         }
         for (let i = 1; i <= 7; i++) {
@@ -198,7 +198,7 @@ class Tableau1 extends Phaser.Scene {
 
 
         // Création du personnage de base
-        this.player = this.physics.add.sprite(-1800 , 2200, 'player1').setOrigin(0, 0); ///750  -2900
+        this.player = this.physics.add.sprite(800 , -1200, 'player1').setOrigin(0, 0); ///750  -2900
         this.player.setDisplaySize(64, 64);
         this.player.body.setAllowGravity(true);
         this.player.setVisible(true);
@@ -227,12 +227,14 @@ class Tableau1 extends Phaser.Scene {
         this.engrenage2 = this.add.sprite(418.17, -1150.50, 'engrenage').setOrigin(0, 0).setDisplaySize(29  ,29);
         this.engrenage3 = this.add.sprite(1150.50, -1727, 'engrenage').setOrigin(0, 0).setDisplaySize(32  ,32);
         this.boss = this.add.sprite(800, -5248, 'boss').setOrigin(0, 0);
-        this.ennemi = this.physics.add.sprite(-767, 2220, 'ennemi').setOrigin(0, 0);
-        this.ennemi.setBodySize(150,150)
+        this.ennemi = this.physics.add.sprite(-767, 2220, 'ennemi').setOrigin(0, 0).setBodySize(100,200);
+        //this.ennemi.setSize(150,150)
 
 
 
-        this.ennemi1 = this.physics.add.sprite(1230, -1950, 'ennemi').setOrigin(0, 0);
+
+
+        this.ennemi1 = this.physics.add.sprite(1230, -1950, 'ennemi').setOrigin(0, 0).setBodySize(150,150);
         var tween = this.tweens.add({
             targets: this.ennemi1,
             x: 600,
@@ -248,7 +250,7 @@ class Tableau1 extends Phaser.Scene {
         });
 
 
-        this.ennemi2 = this.physics.add.sprite(200, -2320, 'ennemi').setOrigin(0, 0).setFlipX(true);
+        this.ennemi2 = this.physics.add.sprite(200, -2320, 'ennemi').setOrigin(0, 0).setFlipX(true).setBodySize(150,150);
         var tween = this.tweens.add({
             targets: this.ennemi2,
             x: 600,
@@ -339,10 +341,8 @@ class Tableau1 extends Phaser.Scene {
             frames: [
                 {key: 'dash1'},
                 {key: 'dash2'},
-                {key: 'dash3'},
-                {key: 'dash4'},
             ],
-            frameRate: 4,
+            frameRate: 2,
         });
         this.anims.create({
             key: 'death',
@@ -470,7 +470,7 @@ class Tableau1 extends Phaser.Scene {
                 {key: 'laser23'},
                 {key: 'laser24'},
             ],
-            frameRate: 24,
+            frameRate: 12,
 
         });
 
@@ -478,7 +478,10 @@ class Tableau1 extends Phaser.Scene {
 
         // Creation des collision
         this.physics.add.collider(this.player, this.collidersMur);
+        this.physics.add.collider(this.player, this.collidersMur);
         this.physics.add.collider(this.ennemi, this.collidersMur);
+        this.physics.add.collider(this.ennemi1, this.speciales);
+        this.physics.add.collider(this.ennemi2, this.speciales);
         this.physics.add.collider(this.player, this.spikecolliders,function()
         {
             me.respawn();
@@ -489,6 +492,38 @@ class Tableau1 extends Phaser.Scene {
             if (me.player.texture.key === "dash1"){
                 me.ennemi.disableBody()
                 me.ennemi.setVisible(false)
+
+            }
+            else{
+                me.respawn()
+            }
+
+        });
+
+        this.physics.add.overlap(this.player, this.laser2,function()
+        {
+            console.log("touché")
+
+        });
+
+        this.physics.add.overlap(this.player, this.ennemi1,function()
+        {
+            if (me.player.texture.key === "dash1"){
+                me.ennemi1.disableBody()
+                me.ennemi1.setVisible(false)
+
+            }
+            else{
+                me.respawn()
+            }
+
+        });
+
+        this.physics.add.overlap(this.player, this.ennemi2,function()
+        {
+            if (me.player.texture.key === "dash1"){
+                me.ennemi2.disableBody()
+                me.ennemi2.setVisible(false)
 
             }
             else{
@@ -594,7 +629,9 @@ class Tableau1 extends Phaser.Scene {
                         this.laser1 = this.physics.add.sprite(x, y - 200, 'laser24').setOrigin(0, 0);
                         this.laser1.body.setAllowGravity(false);
                         this.laser1.setVisible(true);
+
                         this.time.addEvent({
+
                             delay: 5000,
                             callback: ()=>{
                                 this.laser1.play("laser")
@@ -643,6 +680,10 @@ class Tableau1 extends Phaser.Scene {
         this.player.setPosition(this.checkpointX,this.checkpointY);
         this.ennemi.enableBody()
         this.ennemi.setVisible(true)
+        this.ennemi1.enableBody()
+        this.ennemi1.setVisible(true)
+        this.ennemi2.enableBody()
+        this.ennemi2.setVisible(true)
     }
 
 
@@ -671,6 +712,7 @@ class Tableau1 extends Phaser.Scene {
 
                 default:
                     me.player.play('player')
+                    me.player.stop("dash")
                     break;
             }
         })
@@ -732,6 +774,9 @@ class Tableau1 extends Phaser.Scene {
     update(){
 
 
+
+
+
         // this.player.x = this.laser1.x
         // this.player.y = this.laser1.y - 100
 
@@ -744,6 +789,19 @@ class Tableau1 extends Phaser.Scene {
 
        let me = this
 
+        if (this.physics.overlap(this.player,this.laser1)){
+            if (this.laser1.texture.key === "laser10" || this.laser1.texture.key === "laser11" || this.laser1.texture.key === "laser12" || this.laser1.texture.key === "laser13" || this.laser1.texture.key === "laser14" ){
+                me.respawn();
+
+            }
+        }
+
+        if (this.physics.overlap(this.player,this.laser2)){
+            if (this.laser2.texture.key === "laser10" || this.laser2.texture.key === "laser11" || this.laser2.texture.key === "laser12" || this.laser2.texture.key === "laser13" || this.laser2.texture.key === "laser14" ){
+                me.respawn();
+
+            }
+        }
        // me.cameras.main.startFollow(me.player.player, true, 0, 0,0,0).setDeadzone(undefined,0);
 
             if(this.player.body.velocity < 0)
@@ -757,6 +815,8 @@ class Tableau1 extends Phaser.Scene {
             for (var i = 0; i<this.speciales.getChildren().length;i++)
             {
                 this.speciales.getChildren()[i].body.enable = true;
+                this.ennemi1.body.setAllowGravity(true);
+                this.ennemi2.body.setAllowGravity(true);
             }
         }
         else
@@ -765,6 +825,8 @@ class Tableau1 extends Phaser.Scene {
             for (var i = 0 ; i < this.speciales.getChildren().length ;i++)
             {
                 this.speciales.getChildren()[i].body.enable = false;
+                this.ennemi1.body.setAllowGravity(false);
+                this.ennemi2.body.setAllowGravity(false);
             }
         }
 
@@ -787,7 +849,7 @@ class Tableau1 extends Phaser.Scene {
                 this.dash.play();
                 this.flag = true;
             }
-            this.player.setVelocityX(-4000 * this.speed.speedDash);
+            this.player.setVelocityX(-1500 * this.speed.speedDash);
             console.log(this.speed.speedDash);
         }
 

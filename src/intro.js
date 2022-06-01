@@ -8,6 +8,7 @@ class intro extends Phaser.Scene{
         this.load.image("bouton1", "assets/menu/bouton1.png");
         this.load.image("bouton2", "assets/menu/bouton2.png");
         this.load.image("menu", "assets/menu/menu.png");
+        this.load.image("particles", "assets/menu/particles.png");
 
     }
 
@@ -31,6 +32,36 @@ class intro extends Phaser.Scene{
             this.scene.start("mainGame")
 
         })
+
+        this.part = this.add.particles('particles');
+
+        this.emitter = this.part.createEmitter({
+            x: { min: -800, max: 1000 },
+            y: { min: 800, max: 800 },
+            lifespan: { min: 500, max: 4000},
+            speedY: { min: -50, max: -10 },
+            scale: { start: 0.1, end: 0 },
+            quantity: { min: 0.9, max: 0.5 },
+            blendMode: 'ADD'
+
+        });
+        this.emitter.start(0,0);
+
+        this.particles = this.add.particles('particles');
+
+        this.particles.createEmitter({
+            // frame: 'particles',
+            radial: false,
+            x: 100,
+            y: { start: 0, end: 560, steps: 256 },
+            lifespan: 2000,
+            speedX: { min: 200, max: 400 },
+            quantity: 4,
+            gravityY: -50,
+            scale: { start: 0.6, end: 0},
+            blendMode: 'ADD'
+        });
+
 
     }
 
