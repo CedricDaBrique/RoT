@@ -9,6 +9,7 @@ class intro extends Phaser.Scene{
         this.load.image("bouton2", "assets/menu/bouton2.png");
         this.load.image("menu", "assets/menu/menu.png");
         this.load.image("particles", "assets/menu/particles.png");
+        this.load.image("particles2", "assets/menu/particles2.png");
 
     }
 
@@ -47,18 +48,18 @@ class intro extends Phaser.Scene{
         });
         this.emitter.start(0,0);
 
-        this.particles = this.add.particles('particles');
+        this.particles2 = this.add.particles('particles2');
 
-        this.particles.createEmitter({
+        this.particles2.createEmitter({
             // frame: 'particles',
             radial: false,
             x: 100,
             y: { start: 0, end: 560, steps: 256 },
-            lifespan: 2000,
+            lifespan: 1000,
             speedX: { min: 200, max: 400 },
-            quantity: 4,
-            gravityY: -50,
-            scale: { start: 0.6, end: 0},
+            quantity: 2,
+            gravityY: 200,
+            scale: { start: 0.4, end: 0},
             blendMode: 'ADD'
         });
 

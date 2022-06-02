@@ -14,9 +14,11 @@ class Tableau1 extends Phaser.Scene {
         this.load.image("bgf2", "assets/bg3.png");
         this.load.image("vide", "assets/images/vide.png");
         this.load.image("so", "assets/parallax.png");
-        this.load.image("bgb", "assets/bgb.png");
+        this.load.image("barriere", "assets/barriere1.png");
+        // this.load.image("bgb", "assets/bgb.png");
         this.load.image("checkpoint", "assets/animation/checkpoint/checkpoint1.png");
-
+        this.load.image("cristal2", "assets/cristal1.png");
+        this.load.image("cristal1", "assets/cristal.png");
 
         // chargement de la map en json
         this.load.tilemapTiledJSON("map", "assets/MapBasique.json");
@@ -46,7 +48,7 @@ class Tableau1 extends Phaser.Scene {
             this.load.image('ennemi' + i, 'assets/animation/ennemi/ennemis' + i + '.png');
         }
         for (let i = 1; i <= 9; i++) {
-            this.load.image('death' + i, 'assets/animation/death/death' + i + '.png');
+            this.load.image('death' + i, 'assets/animation/ennemisdeath/deathe' + i + '.png');
         }
         for (let i = 1; i <= 8; i++) {
             this.load.image('balancier' + i, 'assets/animation/balancier/balancier' + i + '.png');
@@ -65,6 +67,7 @@ class Tableau1 extends Phaser.Scene {
         let me = this;
 
 
+        this.destroy = 2;
 
         this.scale.resize(1000, 800);
         this.turn = false;
@@ -197,8 +200,27 @@ class Tableau1 extends Phaser.Scene {
         platforms.setCollisionByExclusion(-1, true);
 
 
+
+        //Ajouts d'animations
+        this.teleporter1 = this.add.sprite(190, 2260, 'teleporter').setOrigin(0, 0);
+        this.teleporter2 = this.add.sprite(640, 595, 'teleporter').setOrigin(0, 0);
+        this.teleporter3 = this.add.sprite(740, -3090, 'teleporter').setOrigin(0, 0);
+        this.balancier1 = this.add.sprite(110, 155, 'balancier').setOrigin(0, 0);
+        this.balancier2 = this.add.sprite(885, -100, 'balancier').setOrigin(0, 0).setDisplaySize(50  ,50);
+        this.engrenage2 = this.add.sprite(418.17, -1150.50, 'engrenage').setOrigin(0, 0).setDisplaySize(29  ,29);
+        this.engrenage3 = this.add.sprite(1150.50, -1727, 'engrenage').setOrigin(0, 0).setDisplaySize(32  ,32);
+        this.death = this.add.sprite(1150.50, -1727, 'death1').setOrigin(0, 0).setVisible(false);
+
+
+        this.cristal = this.physics.add.sprite(100, -5035, 'cristal1').setOrigin(0, 0);
+        this.cristal1 = this.physics.add.sprite(1490, -5100, 'cristal2').setOrigin(0, 0);
+
+
+
+
+
         // Création du personnage de base
-        this.player = this.physics.add.sprite(800 , -1200, 'player1').setOrigin(0, 0); ///750  -2900
+        this.player = this.physics.add.sprite(800 , -5000, 'player1').setOrigin(0, 0); ///750  -2900
         this.player.setDisplaySize(64, 64);
         this.player.body.setAllowGravity(true);
         this.player.setVisible(true);
@@ -217,16 +239,12 @@ class Tableau1 extends Phaser.Scene {
 
 
 
-        //Ajouts d'animations
-        this.teleporter1 = this.add.sprite(190, 2260, 'teleporter').setOrigin(0, 0);
-        this.teleporter2 = this.add.sprite(640, 595, 'teleporter').setOrigin(0, 0);
-        this.teleporter3 = this.add.sprite(740, -3090, 'teleporter').setOrigin(0, 0);
-        // this.teleporter4 = this.add.sprite(740, -4655, 'teleporter').setOrigin(0, 0);
-        this.balancier1 = this.add.sprite(110, 155, 'balancier').setOrigin(0, 0);
-        this.balancier2 = this.add.sprite(885, -100, 'balancier').setOrigin(0, 0).setDisplaySize(50  ,50);
-        this.engrenage2 = this.add.sprite(418.17, -1150.50, 'engrenage').setOrigin(0, 0).setDisplaySize(29  ,29);
-        this.engrenage3 = this.add.sprite(1150.50, -1727, 'engrenage').setOrigin(0, 0).setDisplaySize(32  ,32);
-        this.boss = this.add.sprite(800, -5248, 'boss').setOrigin(0, 0);
+
+
+        this.boss = this.physics.add.sprite(820, -5248, 'boss').setOrigin(0, 0);
+        this.barriere = this.add.sprite(820, -5248, 'barriere').setOrigin(0, 0);
+        this.boss.body.setSize(50, 100);
+        this.boss.setOffset(65,134);
         this.ennemi = this.physics.add.sprite(-767, 2220, 'ennemi').setOrigin(0, 0).setBodySize(100,200);
         //this.ennemi.setSize(150,150)
 
@@ -265,13 +283,41 @@ class Tableau1 extends Phaser.Scene {
             onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
         });
 
-        //
-        // this.physics.add.collider(this.ennemi2, this.player,function ()
-        // {
-        //     me.respawn();
+        this.ennemi3 = this.physics.add.sprite(1216, -5000, 'ennemi').setOrigin(0, 0).setFlipX(true).setBodySize(150,150);
+        this.ennemi3.body.setSize(100, 100);
+        this.ennemi3.setOffset(0,0);
+        // var tween = this.tweens.add({
+        //     targets: this.ennemi3,
+        //     x: 600,
+        //     ease: 'ennemi3',
+        //     duration: 3000,
+        //     flipX: true,
+        //     yoyo: true,
+        //     repeat: -1,
+        //     onStart: function () { console.log('onStart'); console.log(arguments); },
+        //     onComplete: function () { console.log('onComplete'); console.log(arguments); },
+        //     onYoyo: function () { console.log('onYoyo'); console.log(arguments); },
+        //     onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
         // });
-        // this.physics.add.collider(this.ennemi2,function (ennemi2)
-        // {
+
+        this.ennemi4 = this.physics.add.sprite(400, -5000, 'ennemi').setOrigin(0, 0).setFlipX(true).setBodySize(150,150);
+        this.ennemi4.body.setSize(100, 100);
+        this.ennemi4.setOffset(0,0);
+        var tween = this.tweens.add({
+            targets: this.ennemi4,
+            x:  this.ennemi4.x + 60,
+            ease: 'ennemi4',
+            duration: 3000,
+            flipX: true,
+            yoyo: true,
+            repeat: -1,
+            onStart: function () { console.log('onStart'); console.log(arguments); },
+            onComplete: function () { console.log('onComplete'); console.log(arguments); },
+            onYoyo: function () { console.log('onYoyo'); console.log(arguments); },
+            onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
+        });
+
+
 
 
 
@@ -358,7 +404,9 @@ class Tableau1 extends Phaser.Scene {
                 {key: 'death9'},
             ],
             frameRate: 9,
+
         });
+
         this.anims.create({
             key: 'engrenage',
             frames: [
@@ -402,6 +450,8 @@ class Tableau1 extends Phaser.Scene {
         this.ennemi.play('ennemi');
         this.ennemi1.play('ennemi');
         this.ennemi2.play('ennemi');
+        this.ennemi3.play('ennemi');
+        this.ennemi4.play('ennemi');
 
 
         this.anims.create({
@@ -420,7 +470,6 @@ class Tableau1 extends Phaser.Scene {
         });
         this.boss.play('boss');
 
-        this.anims.crea
         this.anims.create({
             key: 'teleporter',
             frames: [
@@ -482,6 +531,11 @@ class Tableau1 extends Phaser.Scene {
         this.physics.add.collider(this.ennemi, this.collidersMur);
         this.physics.add.collider(this.ennemi1, this.speciales);
         this.physics.add.collider(this.ennemi2, this.speciales);
+        this.physics.add.collider(this.ennemi3, this.speciales);
+        this.physics.add.collider(this.ennemi4, this.speciales);
+        this.physics.add.collider(this.cristal, this.speciales);
+        this.physics.add.collider(this.cristal1, this.speciales);
+        this.physics.add.collider(this.boss, this.speciales);
         this.physics.add.collider(this.player, this.spikecolliders,function()
         {
             me.respawn();
@@ -497,6 +551,44 @@ class Tableau1 extends Phaser.Scene {
             else{
                 me.respawn()
             }
+
+        });
+
+        this.physics.add.overlap(this.player, this.boss,function()
+        {
+            if (me.player.texture.key === "dash1" && me.destroy === 0){
+                me.boss.disableBody()
+                me.boss.setVisible(false)
+
+
+            }
+            else{
+                me.respawn()
+            }
+
+        });
+
+        this.physics.add.overlap(this.player, this.cristal,function()
+        {
+            if (me.player.texture.key === "dash1"){
+                me.cristal.disableBody()
+                me.cristal.setVisible(false)
+                me.destroy =  me.destroy -1;
+
+            }
+
+
+        });
+
+        this.physics.add.overlap(this.player, this.cristal1,function()
+        {
+            if (me.player.texture.key === "dash1"){
+                me.cristal1.disableBody()
+                me.cristal1.setVisible(false)
+                me.destroy =  me.destroy -1;
+
+            }
+
 
         });
 
@@ -524,6 +616,54 @@ class Tableau1 extends Phaser.Scene {
             if (me.player.texture.key === "dash1"){
                 me.ennemi2.disableBody()
                 me.ennemi2.setVisible(false)
+
+            }
+            else{
+                me.respawn()
+            }
+
+        });
+
+        this.physics.add.overlap(this.player, this.ennemi3,function()
+        {
+            if (me.player.texture.key === "dash1"){
+                me.ennemi3.disableBody()
+                me.ennemi3.setVisible(false)
+
+            }
+            else{
+                me.respawn()
+            }
+
+        });
+        this.physics.add.overlap(this.player, this.ennemi4,function()
+        {
+            if (me.player.texture.key === "dash1"){
+
+                me.death = me.add.sprite(me.ennemi4, me.ennemi4, 'death').setOrigin(0,0).setVisible(true);
+                me.ennemi4.play('death');
+
+                me.switch=me.time.addEvent({
+                    delay: 1000,
+                    callback: ()=>{
+                        me.ennemi4.disableBody()
+                        me.ennemi4.setVisible(false)
+                        me.ennemi4.stop('death')
+                    },
+                    loop: false,
+                })
+
+                // me.time.addEvent({
+                //
+                //     delay: 2000,
+                //     callback: ()=>{
+                //         me.death.setVisible(true)
+                //         me.ennemi4.play(me.ennemi4.x,me.ennemi4.y,'death')
+                //     },
+                //     loop: false
+                // })
+
+
 
             }
             else{
@@ -684,6 +824,16 @@ class Tableau1 extends Phaser.Scene {
         this.ennemi1.setVisible(true)
         this.ennemi2.enableBody()
         this.ennemi2.setVisible(true)
+        this.ennemi3.enableBody()
+        this.ennemi3.setVisible(true)
+        // this.ennemi4.enableBody()
+        // this.ennemi4.setVisible(true)
+        this.boss.setVisible(true)
+        this.boss.enableBody()
+        this.cristal.enableBody()
+        this.cristal.setVisible(true)
+        this.cristal1.enableBody()
+        this.cristal1.setVisible(true)
     }
 
 
@@ -774,7 +924,11 @@ class Tableau1 extends Phaser.Scene {
     update(){
 
 
+        console.log(this.player.texture.key)
 
+        if (this.destroy === 0){
+            this.barriere.setVisible(false)
+        }
 
 
         // this.player.x = this.laser1.x
@@ -817,6 +971,11 @@ class Tableau1 extends Phaser.Scene {
                 this.speciales.getChildren()[i].body.enable = true;
                 this.ennemi1.body.setAllowGravity(true);
                 this.ennemi2.body.setAllowGravity(true);
+                this.ennemi3.body.setAllowGravity(true);
+                this.ennemi4.body.setAllowGravity(true);
+                this.boss.body.setAllowGravity(true);
+                this.cristal.body.setAllowGravity(true);
+                this.cristal1.body.setAllowGravity(true);
             }
         }
         else
@@ -827,6 +986,12 @@ class Tableau1 extends Phaser.Scene {
                 this.speciales.getChildren()[i].body.enable = false;
                 this.ennemi1.body.setAllowGravity(false);
                 this.ennemi2.body.setAllowGravity(false);
+                this.ennemi3.body.setAllowGravity(false);
+                this.ennemi4.body.setAllowGravity(false);
+                this.boss.body.setAllowGravity(false);
+                this.cristal.body.setAllowGravity(false);
+                this.cristal1.body.setAllowGravity(false);
+
             }
         }
 
