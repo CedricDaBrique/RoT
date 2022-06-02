@@ -15,7 +15,6 @@ class Tableau1 extends Phaser.Scene {
         this.load.image("vide", "assets/images/vide.png");
         this.load.image("so", "assets/parallax.png");
         this.load.image("barriere", "assets/barriere1.png");
-        // this.load.image("bgb", "assets/bgb.png");
         this.load.image("checkpoint", "assets/animation/checkpoint/checkpoint1.png");
         this.load.image("cristal2", "assets/cristal1.png");
         this.load.image("cristal1", "assets/cristal.png");
@@ -56,6 +55,9 @@ class Tableau1 extends Phaser.Scene {
         for (let i = 1; i <= 3; i++) {
             this.load.image('engrenage' + i, 'assets/animation/engr/engrenage' + i + '.png');
         }
+        for (let i = 1; i <= 17; i++) {
+            this.load.image('lune' + i, 'assets/animation/lune/lune' + i + '.png');
+        }
 
     }
 
@@ -91,6 +93,7 @@ class Tableau1 extends Phaser.Scene {
         this.checkpoint2 = this.add.sprite(280, -1725   , 'checkpoint').setOrigin(0, 0);
         this.checkpoint3 = this.add.sprite(760, -4565, 'checkpoint').setOrigin(0, 0)
         this.checkpoint4 = this.add.sprite(-1770, 2345, 'checkpoint').setOrigin(0, 0)
+        this.lune = this.add.sprite(490, -5000, 'lune').setOrigin(0, 0)
 
         this.projectiles = this.add.group();
         this.time.addEvent({ delay: 1000, callback: this.tir, callbackScope: this,loop : true });
@@ -132,15 +135,6 @@ class Tableau1 extends Phaser.Scene {
             "calque_plateformes",
             tileset2
         );
-
-        // chargement du calque décors
-        /*
-        const decors = map.createLayer(
-            "calque_objet_visible",
-            tileset
-        );
-
-         */
 
         // chargement du calque plateformes
         const platform = map.createLayer(
@@ -204,7 +198,7 @@ class Tableau1 extends Phaser.Scene {
 
 
 
-        //Ajouts d'animations
+        //Ajout animation et d'asset à la main
         this.teleporter1 = this.add.sprite(190, 2260, 'teleporter').setOrigin(0, 0);
         this.teleporter2 = this.add.sprite(640, 595, 'teleporter').setOrigin(0, 0);
         this.teleporter3 = this.add.sprite(740, -3090, 'teleporter').setOrigin(0, 0);
@@ -213,8 +207,6 @@ class Tableau1 extends Phaser.Scene {
         this.engrenage2 = this.add.sprite(418.17, -1150.50, 'engrenage').setOrigin(0, 0).setDisplaySize(29  ,29);
         this.engrenage3 = this.add.sprite(1150.50, -1727, 'engrenage').setOrigin(0, 0).setDisplaySize(32  ,32);
         this.death = this.add.sprite(1150.50, -1727, 'death1').setOrigin(0, 0).setVisible(false);
-
-
         this.cristal = this.physics.add.sprite(100, -5035, 'cristal1').setOrigin(0, 0);
         this.cristal1 = this.physics.add.sprite(1490, -5100, 'cristal2').setOrigin(0, 0);
 
@@ -223,7 +215,7 @@ class Tableau1 extends Phaser.Scene {
 
 
         // Création du personnage de base
-        this.player = this.physics.add.sprite(800 , -5000, 'player1').setOrigin(0, 0); ///750  -2900
+        this.player = this.physics.add.sprite(1250 , -5205, 'player1').setOrigin(0, 0); ///750  -2900
         this.player.setDisplaySize(64, 64);
         this.player.body.setAllowGravity(true);
         this.player.setVisible(true);
@@ -287,39 +279,6 @@ class Tableau1 extends Phaser.Scene {
             onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
         });
 
-        this.ennemi3 = this.physics.add.sprite(1216, -5000, 'ennemi').setOrigin(0, 0).setFlipX(true).setBodySize(150,150);
-        this.ennemi3.body.setSize(100, 100);
-        this.ennemi3.setOffset(0,0);
-        // var tween = this.tweens.add({
-        //     targets: this.ennemi3,
-        //     x: 600,
-        //     ease: 'ennemi3',
-        //     duration: 3000,
-        //     flipX: true,
-        //     yoyo: true,
-        //     repeat: -1,
-        //     onStart: function () { console.log('onStart'); console.log(arguments); },
-        //     onComplete: function () { console.log('onComplete'); console.log(arguments); },
-        //     onYoyo: function () { console.log('onYoyo'); console.log(arguments); },
-        //     onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
-        // });
-
-        this.ennemi4 = this.physics.add.sprite(400, -5000, 'ennemi').setOrigin(0, 0).setFlipX(true).setBodySize(150,150);
-        this.ennemi4.body.setSize(100, 100);
-        this.ennemi4.setOffset(0,0);
-        var tween = this.tweens.add({
-            targets: this.ennemi4,
-            x:  this.ennemi4.x + 60,
-            ease: 'ennemi4',
-            duration: 3000,
-            flipX: true,
-            yoyo: true,
-            repeat: -1,
-            onStart: function () { console.log('onStart'); console.log(arguments); },
-            onComplete: function () { console.log('onComplete'); console.log(arguments); },
-            onYoyo: function () { console.log('onYoyo'); console.log(arguments); },
-            onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
-        });
 
 
 
@@ -454,8 +413,7 @@ class Tableau1 extends Phaser.Scene {
         this.ennemi.play('ennemi');
         this.ennemi1.play('ennemi');
         this.ennemi2.play('ennemi');
-        this.ennemi3.play('ennemi');
-        this.ennemi4.play('ennemi');
+
 
 
         this.anims.create({
@@ -527,6 +485,33 @@ class Tableau1 extends Phaser.Scene {
 
         });
 
+        this.anims.create({
+            key: 'lune',
+            frames: [
+                {key: 'lune1'},
+                {key: 'lune2'},
+                {key: 'lune3'},
+                {key: 'lune4'},
+                {key: 'lune5'},
+                {key: 'lune6'},
+                {key: 'lune7'},
+                {key: 'lune8'},
+                {key: 'lune9'},
+                {key: 'lune10'},
+                {key: 'lune11'},
+                {key: 'lune12'},
+                {key: 'lune13'},
+                {key: 'lune14'},
+                {key: 'lune15'},
+                {key: 'lune16'},
+                {key: 'lune17'},
+            ],
+            frameRate: 9,
+            repeat:-1,
+
+        });
+        this.lune.play('lune');
+
 
 
         // Creation des collision
@@ -535,8 +520,6 @@ class Tableau1 extends Phaser.Scene {
         this.physics.add.collider(this.ennemi, this.collidersMur);
         this.physics.add.collider(this.ennemi1, this.speciales);
         this.physics.add.collider(this.ennemi2, this.speciales);
-        this.physics.add.collider(this.ennemi3, this.speciales);
-        this.physics.add.collider(this.ennemi4, this.speciales);
         this.physics.add.collider(this.cristal, this.speciales);
         this.physics.add.collider(this.cristal1, this.speciales);
         this.physics.add.collider(this.boss, this.speciales);
@@ -605,9 +588,19 @@ class Tableau1 extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.ennemi1,function()
         {
             if (me.player.texture.key === "dash1"){
-                me.ennemi1.disableBody()
-                me.ennemi1.setVisible(false)
 
+                me.death = me.add.sprite(me.ennemi1, me.ennemi1, 'death').setOrigin(0,0).setVisible(true);
+                me.ennemi1.play('death');
+
+                me.switch=me.time.addEvent({
+                    delay: 1000,
+                    callback: ()=>{
+                        me.ennemi1.disableBody()
+                        me.ennemi1.setVisible(false)
+                        me.ennemi1.stop('death')
+                    },
+                    loop: false,
+                })
             }
             else{
                 me.respawn()
@@ -618,63 +611,28 @@ class Tableau1 extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.ennemi2,function()
         {
             if (me.player.texture.key === "dash1"){
-                me.ennemi2.disableBody()
-                me.ennemi2.setVisible(false)
 
-            }
-            else{
-                me.respawn()
-            }
-
-        });
-
-        this.physics.add.overlap(this.player, this.ennemi3,function()
-        {
-            if (me.player.texture.key === "dash1"){
-                me.ennemi3.disableBody()
-                me.ennemi3.setVisible(false)
-
-            }
-            else{
-                me.respawn()
-            }
-
-        });
-        this.physics.add.overlap(this.player, this.ennemi4,function()
-        {
-            if (me.player.texture.key === "dash1"){
-
-                me.death = me.add.sprite(me.ennemi4, me.ennemi4, 'death').setOrigin(0,0).setVisible(true);
-                me.ennemi4.play('death');
+                me.death = me.add.sprite(me.ennemi2, me.ennemi2, 'death').setOrigin(0,0).setVisible(true);
+                me.ennemi2.play('death');
 
                 me.switch=me.time.addEvent({
                     delay: 1000,
                     callback: ()=>{
-                        me.ennemi4.disableBody()
-                        me.ennemi4.setVisible(false)
-                        me.ennemi4.stop('death')
+                        me.ennemi2.disableBody()
+                        me.ennemi2.setVisible(false)
+                        me.ennemi2.stop('death')
                     },
                     loop: false,
                 })
-
-                // me.time.addEvent({
-                //
-                //     delay: 2000,
-                //     callback: ()=>{
-                //         me.death.setVisible(true)
-                //         me.ennemi4.play(me.ennemi4.x,me.ennemi4.y,'death')
-                //     },
-                //     loop: false
-                // })
-
-
-
             }
             else{
                 me.respawn()
             }
 
         });
+
+
+
 
 
         this.physics.add.collider(this.player, this.speciales);
@@ -835,9 +793,9 @@ class Tableau1 extends Phaser.Scene {
 
     }
 
+    //Fonction pour réapparaître
     respawn()
     {
-
         this.player.setPosition(this.checkpointX,this.checkpointY);
         this.ennemi.enableBody()
         this.ennemi.setVisible(true)
@@ -845,10 +803,6 @@ class Tableau1 extends Phaser.Scene {
         this.ennemi1.setVisible(true)
         this.ennemi2.enableBody()
         this.ennemi2.setVisible(true)
-        this.ennemi3.enableBody()
-        this.ennemi3.setVisible(true)
-        // this.ennemi4.enableBody()
-        // this.ennemi4.setVisible(true)
         this.boss.setVisible(true)
         this.boss.enableBody()
         this.cristal.enableBody()
@@ -1013,8 +967,6 @@ class Tableau1 extends Phaser.Scene {
                 this.speciales.getChildren()[i].body.enable = true;
                 this.ennemi1.body.setAllowGravity(true);
                 this.ennemi2.body.setAllowGravity(true);
-                this.ennemi3.body.setAllowGravity(true);
-                this.ennemi4.body.setAllowGravity(true);
                 this.boss.body.setAllowGravity(true);
                 this.cristal.body.setAllowGravity(true);
                 this.cristal1.body.setAllowGravity(true);
@@ -1028,8 +980,7 @@ class Tableau1 extends Phaser.Scene {
                 this.speciales.getChildren()[i].body.enable = false;
                 this.ennemi1.body.setAllowGravity(false);
                 this.ennemi2.body.setAllowGravity(false);
-                this.ennemi3.body.setAllowGravity(false);
-                this.ennemi4.body.setAllowGravity(false);
+
                 this.boss.body.setAllowGravity(false);
                 this.cristal.body.setAllowGravity(false);
                 this.cristal1.body.setAllowGravity(false);
