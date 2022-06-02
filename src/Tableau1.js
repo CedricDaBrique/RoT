@@ -67,6 +67,7 @@ class Tableau1 extends Phaser.Scene {
         let me = this;
 
 
+        this.tireD = false;
         this.destroy = 2;
 
         this.scale.resize(1000, 800);
@@ -91,6 +92,8 @@ class Tableau1 extends Phaser.Scene {
         this.checkpoint3 = this.add.sprite(760, -4565, 'checkpoint').setOrigin(0, 0)
         this.checkpoint4 = this.add.sprite(-1770, 2345, 'checkpoint').setOrigin(0, 0)
 
+        this.projectiles = this.add.group();
+        this.time.addEvent({ delay: 1000, callback: this.tir, callbackScope: this,loop : true });
 
 
 
@@ -234,6 +237,7 @@ class Tableau1 extends Phaser.Scene {
             me.checkpointX = me.player.x;
             me.checkpointY = me.player.y;
         });
+
 
 
 
@@ -813,6 +817,23 @@ class Tableau1 extends Phaser.Scene {
         })
     }
 
+    tir() {
+        let me = this;
+
+
+
+            if (this.tireD === true) {
+
+                this.balle = new Balle(this);
+                this.physics.add.collider(this.player, this.balle.balle, function () {
+
+                })
+            }
+
+
+
+
+    }
 
     respawn()
     {
@@ -836,7 +857,21 @@ class Tableau1 extends Phaser.Scene {
         this.cristal1.setVisible(true)
     }
 
+    IaGestion2() {
+            this.dist2 = Phaser.Math.Distance.BetweenPoints(this.player, this.boss);
 
+            if (this.dist2 <= 900) {
+
+                this.tireD = true
+
+
+            } else {
+                this.tireD = false;
+            }
+
+
+
+    }
     initKeyboard() {
         let me = this;
 
@@ -924,7 +959,12 @@ class Tableau1 extends Phaser.Scene {
     update(){
 
 
-        console.log(this.player.texture.key)
+
+        for(var i = 0; i < this.projectiles.getChildren().length; i++){
+            var tir = this.projectiles.getChildren()[i];
+            tir.update();
+        }
+        console.log(this.tireD)
 
         if (this.destroy === 0){
             this.barriere.setVisible(false)
@@ -942,6 +982,8 @@ class Tableau1 extends Phaser.Scene {
         }
 
        let me = this
+        this.IaGestion2()
+
 
         if (this.physics.overlap(this.player,this.laser1)){
             if (this.laser1.texture.key === "laser10" || this.laser1.texture.key === "laser11" || this.laser1.texture.key === "laser12" || this.laser1.texture.key === "laser13" || this.laser1.texture.key === "laser14" ){
