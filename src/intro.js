@@ -5,8 +5,8 @@ class intro extends Phaser.Scene{
     }
 
     preload(){
-        this.load.image("bouton1", "assets/menu/bouton1.png");
-        this.load.image("bouton2", "assets/menu/bouton2.png");
+        this.load.image("bouton1", "assets/menu/bouton3.png");
+        this.load.image("bouton2", "assets/menu/bouton4.png");
         this.load.image("menu", "assets/menu/menu.png");
         this.load.image("particles", "assets/menu/particles.png");
         this.load.image("particles2", "assets/menu/particles2.png");
