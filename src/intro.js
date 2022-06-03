@@ -53,7 +53,7 @@ class intro extends Phaser.Scene{
         this.particles2.createEmitter({
             // frame: 'particles',
             radial: false,
-            x: 100,
+            x: 400,
             y: { start: 0, end: 560, steps: 256 },
             lifespan: 1000,
             speedX: { min: 200, max: 400 },

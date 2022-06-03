@@ -14,7 +14,7 @@ let gameConfig = {
             fps : 60
         }
     },
-    scene: [intro,Tableau1]
+    scene: [intro,Tableau1,credits]
 
 };
 let game = new Phaser.Game(gameConfig);
